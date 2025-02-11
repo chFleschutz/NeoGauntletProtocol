@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
+#include "MoverComponent.h"
 
 #include "PlayerAttributeSet.h"
 
@@ -31,4 +32,7 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	UPlayerAttributeSet* AttributeSet;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	UMoverComponent* MoverComponent;
 };

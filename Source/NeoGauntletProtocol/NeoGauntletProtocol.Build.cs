@@ -16,7 +16,8 @@ public class NeoGauntletProtocol : ModuleRules
 			"EnhancedInput",
             "GameplayAbilities",
             "GameplayTags",
-            "GameplayTasks"
+            "GameplayTasks",
+			"Mover"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

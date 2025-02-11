@@ -7,10 +7,13 @@
 ANeoPawn::ANeoPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	SetReplicateMovement(false); // Mover handles movement replication
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	
+
 	AttributeSet = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("AttributeSet"));
+	
+	MoverComponent = CreateDefaultSubobject<UMoverComponent>(TEXT("MoverComponent"));
 }
 
 void ANeoPawn::BeginPlay()
