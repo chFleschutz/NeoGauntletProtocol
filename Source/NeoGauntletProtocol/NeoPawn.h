@@ -7,6 +7,8 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
 #include "MoverComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 #include "PlayerAttributeSet.h"
 
@@ -35,4 +37,20 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Movement")
 	UMoverComponent* MoverComponent;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputMappingContext> InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> MoveInputAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> LookInputAction;
+
+private:
+	void OnMoveTriggered(const FInputActionValue& Value);
+	void OnMoveCompleted(const FInputActionValue& Value);
+	void OnLookTriggered(const FInputActionValue& Value);
+	void OnLookCompleted(const FInputActionValue& Value);
 };
