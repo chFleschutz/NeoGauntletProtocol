@@ -15,7 +15,10 @@
 #include "NeoPawn.generated.h"
 
 UCLASS()
-class NEOGAUNTLETPROTOCOL_API ANeoPawn : public APawn, public IAbilitySystemInterface
+class NEOGAUNTLETPROTOCOL_API ANeoPawn : 
+	public APawn, 
+	public IAbilitySystemInterface,
+	public IMoverInputProducerInterface
 {
 	GENERATED_BODY()
 
@@ -26,21 +29,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual void ProduceInput_Implementation(int32 SimTimeMs, FMoverInputCmdContext& InputCmdResult) override;
 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
-	UAbilitySystemComponent* AbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
-	UPlayerAttributeSet* AttributeSet;
+	TObjectPtr<UPlayerAttributeSet> AttributeSet;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	UMoverComponent* MoverComponent;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputMappingContext> InputMappingContext;
+	TObjectPtr<UMoverComponent> MoverComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> MoveInputAction;
@@ -53,4 +54,6 @@ private:
 	void OnMoveCompleted(const FInputActionValue& Value);
 	void OnLookTriggered(const FInputActionValue& Value);
 	void OnLookCompleted(const FInputActionValue& Value);
+
+	FVector3d CachedMoveInput = FVector3d::ZeroVector;
 };

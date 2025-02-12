@@ -41,6 +41,26 @@ void ANeoPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
+void ANeoPawn::ProduceInput_Implementation(int32 SimTimeMs, FMoverInputCmdContext& InputCmdResult)
+{
+	FCharacterDefaultInputs& CharacterInputs = InputCmdResult.InputCollection.FindOrAddMutableDataByType<FCharacterDefaultInputs>();
+
+	if (!GetController())
+	{
+		if (GetLocalRole() == ENetRole::ROLE_Authority && GetRemoteRole() == ENetRole::ROLE_SimulatedProxy)
+		{
+			static const FCharacterDefaultInputs DoNothingInput;
+			CharacterInputs = DoNothingInput;
+		}
+		return;
+	}
+	
+	FString msg = FString::Printf(TEXT("Move %s"), *CachedMoveInput.ToString());
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Cyan, msg);
+
+	CharacterInputs.SetMoveInput(EMoveInputType::DirectionalIntent, CachedMoveInput);
+}
+
 UAbilitySystemComponent* ANeoPawn::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -48,9 +68,7 @@ UAbilitySystemComponent* ANeoPawn::GetAbilitySystemComponent() const
 
 void ANeoPawn::OnMoveTriggered(const FInputActionValue& Value)
 {
-	// Debug print the movement vector
-	const FVector MovementVector = Value.Get<FVector>();
-	UE_LOG(LogTemp, Warning, TEXT("Movement Vector: %s"), *MovementVector.ToString());
+	CachedMoveInput = FVector3d(Value.Get<FVector>());
 }
 
 void ANeoPawn::OnMoveCompleted(const FInputActionValue& Value)
