@@ -55,9 +55,6 @@ void ANeoPawn::ProduceInput_Implementation(int32 SimTimeMs, FMoverInputCmdContex
 		return;
 	}
 	
-	FString msg = FString::Printf(TEXT("Move %s"), *CachedMoveInput.ToString());
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Cyan, msg);
-
 	CharacterInputs.SetMoveInput(EMoveInputType::DirectionalIntent, CachedMoveInput);
 }
 
@@ -73,6 +70,7 @@ void ANeoPawn::OnMoveTriggered(const FInputActionValue& Value)
 
 void ANeoPawn::OnMoveCompleted(const FInputActionValue& Value)
 {
+	CachedMoveInput = FVector3d::ZeroVector;
 }
 
 void ANeoPawn::OnLookTriggered(const FInputActionValue& Value)
