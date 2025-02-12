@@ -56,4 +56,5 @@ private:
 	void OnLookCompleted(const FInputActionValue& Value);
 
 	FVector3d CachedMoveInput = FVector3d::ZeroVector;
+	FRotator3d CachedLookInput = FRotator3d::ZeroRotator;
 };

@@ -20,12 +20,26 @@ void ANeoPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	{
+		PC->PlayerCameraManager->ViewPitchMax = 89.0f;
+		PC->PlayerCameraManager->ViewPitchMin = -89.0f;
+	}
 }
 
 void ANeoPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		static const float LookRateYaw = 100.0f;
+		static const float LookRatePitch = 100.0f;
+		PC->AddYawInput(CachedLookInput.Yaw * LookRateYaw * DeltaTime);
+		PC->AddPitchInput(-CachedLookInput.Pitch * LookRatePitch * DeltaTime);
+	}
+
+	CachedLookInput = FRotator3d::ZeroRotator;
 }
 
 void ANeoPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -54,8 +68,14 @@ void ANeoPawn::ProduceInput_Implementation(int32 SimTimeMs, FMoverInputCmdContex
 		}
 		return;
 	}
-	
-	CharacterInputs.SetMoveInput(EMoveInputType::DirectionalIntent, CachedMoveInput);
+
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	{
+		CharacterInputs.ControlRotation = PC->GetControlRotation();
+	}
+
+	FVector finalMoveInput = CharacterInputs.ControlRotation.RotateVector(CachedMoveInput);
+	CharacterInputs.SetMoveInput(EMoveInputType::DirectionalIntent, finalMoveInput);
 }
 
 UAbilitySystemComponent* ANeoPawn::GetAbilitySystemComponent() const
@@ -75,8 +95,12 @@ void ANeoPawn::OnMoveCompleted(const FInputActionValue& Value)
 
 void ANeoPawn::OnLookTriggered(const FInputActionValue& Value)
 {
+	FVector2D LookInput = Value.Get<FVector2D>();
+	CachedLookInput.Yaw = LookInput.X;
+	CachedLookInput.Pitch = LookInput.Y;
 }
 
 void ANeoPawn::OnLookCompleted(const FInputActionValue& Value)
 {
+	CachedLookInput = FRotator3d::ZeroRotator;
 }
